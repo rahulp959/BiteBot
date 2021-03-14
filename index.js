@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Discord = require('discord.js');
 require('dotenv').config();
 const AsciiTable = require('ascii-table')
@@ -8,7 +9,19 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-const biters = {}
+const savedChompsFile = 'savedChomps.json';
+let rawSavedData;
+
+if(fs.existsSync(savedChompsFile)) {
+  rawSavedData = fs.readFileSync(savedChompsFile);
+}
+
+let biters = {};
+
+if(rawSavedData) {
+  biters = JSON.parse(rawSavedData)
+}
+
 
 client.on('message', msg => {
 
@@ -34,6 +47,8 @@ client.on('message', msg => {
         }
       });
     }
+
+    fs.writeFileSync(savedChompsFile, JSON.stringify(biters))
   }
 
   if(msg.content.startsWith('$table')) {
@@ -55,10 +70,7 @@ client.on('message', msg => {
       else {
         msg.reply('No table for that user')
       }
-
     }
-
-
   }
 });
  
